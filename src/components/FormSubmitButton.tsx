@@ -1,7 +1,9 @@
 "use client";
 
 import { ComponentProps } from "react";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+//@ts-expect-error
+import { useFormStatus } from "react-dom";
+
 
 type FormSubmitButtonProps = {
   children: React.ReactNode;
@@ -10,7 +12,7 @@ type FormSubmitButtonProps = {
 
 export default function FormSubmitButton({
   children,
-  className = "",
+  className,
   ...props
 }: FormSubmitButtonProps) {
   const { pending } = useFormStatus();
@@ -18,7 +20,7 @@ export default function FormSubmitButton({
   return (
     <button
       {...props}
-      className={`btn btn-primary ${className}`}
+      className={`btn-primary btn ${className}`}
       type="submit"
       disabled={pending}
     >

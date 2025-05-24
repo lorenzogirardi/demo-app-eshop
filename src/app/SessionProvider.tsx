@@ -1,6 +1,3 @@
 "use client";
 
-// Mock SessionProvider that does nothing
-export default function SessionProvider({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-}
+export { SessionProvider as default } from "next-auth/react"

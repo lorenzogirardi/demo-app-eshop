@@ -1,5 +1,7 @@
 import FormSubmitButton from "@/components/FormSubmitButton";
+import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/db/prisma";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -9,7 +11,11 @@ export const metadata = {
 async function addProduct(formData: FormData) {
   "use server";
 
-  // No authentication check needed
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("https://demo.dev.k8s.technology/api/auth/signin?callbackUrl=/add-product");
+  }
 
   const name = formData.get("name")?.toString();
   const description = formData.get("description")?.toString();
@@ -28,7 +34,11 @@ async function addProduct(formData: FormData) {
 }
 
 export default async function AddProductPage() {
-  // No authentication check needed
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("https://demo.dev.k8s.technology/api/auth/signin?callbackUrl=/add-product");
+  }
 
   return (
     <div>
