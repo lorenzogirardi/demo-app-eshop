@@ -1,29 +1,29 @@
-import { prisma } from "@/lib/db/prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { NextAuthOptions } from "next-auth";
-import { Adapter } from "next-auth/adapters";
-import Auth0Provider from "next-auth/providers/auth0";
-import { mergeAnonymousCartIntoUserAccount } from "./db/cart";
+import { prisma } from "@/lib/db/prisma";
 
+// Mock user for no-auth mode
+const mockUser = {
+  id: "mock-user-id",
+  name: "Demo User",
+  email: "demo@example.com",
+  image: "https://i.pravatar.cc/150?img=3"
+};
+
+// Modified auth options to bypass authentication
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as Adapter,
-  providers: [
-    Auth0Provider({
-      clientId: process.env.AUTH0_CLIENT_ID!,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET!,
-      issuer: process.env.AUTH0_ISSUER!,
-    }),
-  ],
-  secret: process.env.SECRET,
+  providers: [],
+  secret: "mock-secret",
   callbacks: {
-    session({ session, user }) {
-      session.user.id = user.id;
-      return session;
+    async session() {
+      // Always return a mock session
+      return {
+        user: mockUser,
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      };
     },
-  },
-  events: {
-    async signIn({user}) {
-      await mergeAnonymousCartIntoUserAccount(user.id)
+    async signIn() {
+      // Always allow sign in
+      return true;
     }
   }
 };
